@@ -61,6 +61,22 @@ def op_if(tape, condition: Variable, body: Callable[[], str]) -> str:
     return op_while(tape, condition, lambda: body() + op_clear(tape, condition))
 
 
+def op_accumulate(tape: TapeStack, accumulator: Variable, summand: Variable) -> str:
+    return op_while(
+        tape,
+        summand,
+        lambda: (op_decrement(tape, summand) + op_increment(tape, accumulator)),
+    )
+
+
+def op_subtract(tape: TapeStack, accumulator: Variable, summand: Variable) -> str:
+    return op_while(
+        tape,
+        summand,
+        lambda: (op_decrement(tape, summand) + op_decrement(tape, accumulator)),
+    )
+
+
 def fn_copy(tape: TapeStack, destination: Variable, source: Variable) -> str:
     temp = tape.register_variable()
     code = (
@@ -78,22 +94,6 @@ def fn_copy(tape: TapeStack, destination: Variable, source: Variable) -> str:
     )
     tape.unregister_variable(temp)
     return code
-
-
-def op_accumulate(tape: TapeStack, accumulator: Variable, summand: Variable) -> str:
-    return op_while(
-        tape,
-        summand,
-        lambda: (op_decrement(tape, summand) + op_increment(tape, accumulator)),
-    )
-
-
-def op_subtract(tape: TapeStack, accumulator: Variable, summand: Variable) -> str:
-    return op_while(
-        tape,
-        summand,
-        lambda: (op_decrement(tape, summand) + op_decrement(tape, accumulator)),
-    )
 
 
 def fn_plus(tape: TapeStack, result: Variable, left: Variable, right: Variable) -> str:
