@@ -1,11 +1,11 @@
 from .codegen import (
     TapeStack,
-    op_add,
-    op_copy,
+    fn_plus,
+    fn_copy,
     op_input,
     op_output,
     op_multiply,
-    op_minus,
+    fn_minus,
     op_not,
     op_less,
     op_and,
@@ -22,7 +22,7 @@ def test_copy() -> None:
     destination = tape.register_variable()
     code = (
         op_input(tape, source)
-        + op_copy(tape, destination, source)
+        + fn_copy(tape, destination, source)
         + op_output(tape, destination)
     )
     assert StateMachine(code, [2]).run() == [2]
@@ -36,7 +36,7 @@ def test_add() -> None:
     code = (
         op_input(tape, left)
         + op_input(tape, right)
-        + op_add(tape, result, left, right)
+        + fn_plus(tape, result, left, right)
         + op_output(tape, result)
     )
     assert StateMachine(code, [2, 3]).run() == [5]
@@ -64,7 +64,7 @@ def test_minus() -> None:
     code = (
         op_input(tape, left)
         + op_input(tape, right)
-        + op_minus(tape, result, left, right)
+        + fn_minus(tape, result, left, right)
         + op_output(tape, result)
     )
     assert StateMachine(code, [7, 5]).run() == [2]
