@@ -9,6 +9,7 @@ from .codegen import (
     op_not,
     op_less,
     op_and,
+    op_subtract_smaller,
 )
 from .interpreter import StateMachine
 
@@ -96,6 +97,23 @@ def test_and() -> None:
     assert StateMachine(code, [0, 1]).run() == [0]
     assert StateMachine(code, [1, 0]).run() == [0]
     assert StateMachine(code, [1, 1]).run() == [1]
+
+
+def test_subtract_smaller() -> None:
+    tape = TapeStack()
+    left = tape.register_variable()
+    right = tape.register_variable()
+    code = (
+        op_input(tape, left)
+        + op_input(tape, right)
+        + op_subtract_smaller(tape, left, right)
+        + op_output(tape, left)
+        + op_output(tape, right)
+    )
+    assert StateMachine(code, [2, 4]).run() == [0, 2]
+    assert StateMachine(code, [2, 1]).run() == [1, 0]
+    assert StateMachine(code, [1, 1]).run() == [0, 0]
+    assert StateMachine(code, [0, 0]).run() == [0, 0]
 
 
 def test_less() -> None:
