@@ -194,21 +194,38 @@ def op_subtract_smaller(tape: TapeStack, left: Variable, right: Variable) -> str
     return code
 
 
-def op_less(tape: TapeStack, result: Variable, left: Variable, right: Variable) -> str:
+def fn_less(tape: TapeStack, result: Variable, left: Variable, right: Variable) -> str:
+    left_copy = tape.register_variable()
+    right_copy = tape.register_variable()
     not_left = tape.register_variable()
     code = (
-        op_subtract_smaller(tape, left, right)
-        + fn_not(tape, not_left, left)
-        + fn_and(tape, result, not_left, right)
+        op_clear(tape, result)
+        + fn_copy(tape, left_copy, left)
+        + fn_copy(tape, right_copy, right)
+        + op_subtract_smaller(tape, left_copy, right_copy)
+        + fn_not(tape, not_left, left_copy)
+        + fn_and(tape, result, not_left, right_copy)
     )
     tape.unregister_variable(not_left)
+    tape.unregister_variable(right_copy)
+    tape.unregister_variable(left_copy)
     return code
 
 
-def op_less_equals(
+def fn_less_equals(
     tape: TapeStack, result: Variable, left: Variable, right: Variable
 ) -> str:
-    code = op_subtract_smaller(tape, left, right) + fn_not(tape, result, left)
+    left_copy = tape.register_variable()
+    right_copy = tape.register_variable()
+    code = (
+        op_clear(tape, result)
+        + fn_copy(tape, left_copy, left)
+        + fn_copy(tape, right_copy, right)
+        + op_subtract_smaller(tape, left_copy, right_copy)
+        + fn_not(tape, result, left_copy)
+    )
+    tape.unregister_variable(right_copy)
+    tape.unregister_variable(left_copy)
     return code
 
 

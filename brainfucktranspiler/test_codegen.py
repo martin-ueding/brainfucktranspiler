@@ -7,10 +7,10 @@ from .codegen import (
     fn_multiply,
     fn_minus,
     fn_not,
-    op_less,
+    fn_less,
     fn_and,
     op_subtract_smaller,
-    op_less_equals,
+    fn_less_equals,
     op_divide,
 )
 from .interpreter import StateMachine
@@ -126,7 +126,7 @@ def test_less() -> None:
     code = (
         op_input(tape, left)
         + op_input(tape, right)
-        + op_less(tape, result, left, right)
+        + fn_less(tape, result, left, right)
         + op_output(tape, result)
     )
     assert StateMachine(code, [2, 2]).run() == [0]
@@ -142,7 +142,7 @@ def test_less_equals() -> None:
     code = (
         op_input(tape, left)
         + op_input(tape, right)
-        + op_less_equals(tape, result, left, right)
+        + fn_less_equals(tape, result, left, right)
         + op_output(tape, result)
     )
     assert StateMachine(code, [2, 2]).run() == [1]
