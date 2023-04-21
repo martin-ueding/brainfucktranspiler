@@ -11,7 +11,7 @@ from .codegen import (
     fn_and,
     op_subtract_smaller,
     fn_less_equals,
-    op_divide,
+    fn_divide,
 )
 from .interpreter import StateMachine
 
@@ -66,6 +66,32 @@ def test_minus() -> None:
         + op_input(tape, right)
         + fn_minus(tape, result, left, right)
         + op_output(tape, result)
+    )
+    assert StateMachine(code, [7, 5]).run() == [2]
+
+
+def test_minus_inplace_left() -> None:
+    tape = TapeStack()
+    left = tape.register_variable()
+    right = tape.register_variable()
+    code = (
+        op_input(tape, left)
+        + op_input(tape, right)
+        + fn_minus(tape, left, left, right)
+        + op_output(tape, left)
+    )
+    assert StateMachine(code, [7, 5]).run() == [2]
+
+
+def test_minus_inplace_right() -> None:
+    tape = TapeStack()
+    left = tape.register_variable()
+    right = tape.register_variable()
+    code = (
+        op_input(tape, left)
+        + op_input(tape, right)
+        + fn_minus(tape, right, left, right)
+        + op_output(tape, right)
     )
     assert StateMachine(code, [7, 5]).run() == [2]
 
@@ -159,7 +185,7 @@ def test_divide() -> None:
     code = (
         op_input(tape, dividend)
         + op_input(tape, divisor)
-        + op_divide(tape, quotient, remainder, dividend, divisor)
+        + fn_divide(tape, quotient, remainder, dividend, divisor)
         + op_output(tape, quotient)
         + op_output(tape, remainder)
     )

@@ -100,9 +100,9 @@ def fn_plus(tape: TapeStack, result: Variable, left: Variable, right: Variable) 
     left_copy = tape.register_variable()
     right_copy = tape.register_variable()
     code = (
-        op_clear(tape, result)
-        + fn_copy(tape, left_copy, left)
+        fn_copy(tape, left_copy, left)
         + fn_copy(tape, right_copy, right)
+        + op_clear(tape, result)
         + op_accumulate(tape, result, left_copy)
         + op_accumulate(tape, result, right_copy)
     )
@@ -115,9 +115,9 @@ def fn_minus(tape: TapeStack, result: Variable, left: Variable, right: Variable)
     left_copy = tape.register_variable()
     right_copy = tape.register_variable()
     code = (
-        op_clear(tape, result)
-        + fn_copy(tape, left_copy, left)
+        fn_copy(tape, left_copy, left)
         + fn_copy(tape, right_copy, right)
+        + op_clear(tape, result)
         + op_accumulate(tape, result, left_copy)
         + op_subtract(tape, result, right_copy)
     )
@@ -133,9 +133,9 @@ def fn_multiply(
     left_copy = tape.register_variable()
     right_copy = tape.register_variable()
     code = (
-        op_clear(tape, temp)
-        + fn_copy(tape, left_copy, left)
+        fn_copy(tape, left_copy, left)
         + fn_copy(tape, right_copy, right)
+        + op_clear(tape, temp)
         + op_while(
             tape,
             left_copy,
@@ -155,8 +155,8 @@ def fn_multiply(
 def fn_not(tape: TapeStack, result: Variable, condition: Variable) -> str:
     condition_copy = tape.register_variable()
     code = (
-        op_clear(tape, result)
-        + fn_copy(tape, condition_copy, condition)
+        fn_copy(tape, condition_copy, condition)
+        + op_clear(tape, result)
         + op_increment(tape, result)
         + op_if(tape, condition_copy, lambda: op_clear(tape, result))
     )
@@ -168,9 +168,9 @@ def fn_and(tape: TapeStack, result: Variable, left: Variable, right: Variable) -
     left_copy = tape.register_variable()
     right_copy = tape.register_variable()
     code = (
-        op_clear(tape, result)
-        + fn_copy(tape, left_copy, left)
+        fn_copy(tape, left_copy, left)
         + fn_copy(tape, right_copy, right)
+        + op_clear(tape, result)
         + op_if(
             tape,
             left_copy,
@@ -199,9 +199,9 @@ def fn_less(tape: TapeStack, result: Variable, left: Variable, right: Variable) 
     right_copy = tape.register_variable()
     not_left = tape.register_variable()
     code = (
-        op_clear(tape, result)
-        + fn_copy(tape, left_copy, left)
+        fn_copy(tape, left_copy, left)
         + fn_copy(tape, right_copy, right)
+        + op_clear(tape, result)
         + op_subtract_smaller(tape, left_copy, right_copy)
         + fn_not(tape, not_left, left_copy)
         + fn_and(tape, result, not_left, right_copy)
@@ -218,9 +218,9 @@ def fn_less_equals(
     left_copy = tape.register_variable()
     right_copy = tape.register_variable()
     code = (
-        op_clear(tape, result)
-        + fn_copy(tape, left_copy, left)
+        fn_copy(tape, left_copy, left)
         + fn_copy(tape, right_copy, right)
+        + op_clear(tape, result)
         + op_subtract_smaller(tape, left_copy, right_copy)
         + fn_not(tape, result, left_copy)
     )
@@ -229,11 +229,40 @@ def fn_less_equals(
     return code
 
 
-def op_divide(
+def fn_greater(
+    tape: TapeStack, result: Variable, left: Variable, right: Variable
+) -> str:
+    return fn_less(tape, result, right, left)
+
+
+def fn_greater_equals(
+    tape: TapeStack, result: Variable, left: Variable, right: Variable
+) -> str:
+    return fn_less_equals(tape, result, right, left)
+
+
+def fn_divide(
     tape: TapeStack,
     quotient: Variable,
     remainder: Variable,
     dividend: Variable,
     divisor: Variable,
 ) -> str:
-    return ""
+    has_remainder = tape.register_variable()
+    cond = lambda: fn_greater_equals(tape, has_remainder, remainder, divisor)
+    code = (
+        fn_copy(tape, remainder, dividend)
+        + op_clear(tape, quotient)
+        + cond()
+        + op_while(
+            tape,
+            has_remainder,
+            lambda: (
+                fn_minus(tape, remainder, remainder, divisor)
+                + op_increment(tape, quotient)
+                + cond()
+            ),
+        )
+    )
+    tape.unregister_variable(has_remainder)
+    return code
