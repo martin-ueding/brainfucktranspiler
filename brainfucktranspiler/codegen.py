@@ -81,6 +81,7 @@ def fn_copy(tape: TapeStack, destination: Variable, source: Variable) -> str:
     temp = tape.register_variable()
     code = (
         op_clear(tape, temp)
+        + op_clear(tape, destination)
         + op_while(
             tape,
             source,
