@@ -13,7 +13,7 @@ from .codegen import (
 from .interpreter import StateMachine
 
 
-def test_op_copy() -> None:
+def test_copy() -> None:
     tape = TapeStack()
     source = tape.register_variable()
     destination = tape.register_variable()
@@ -25,7 +25,7 @@ def test_op_copy() -> None:
     assert StateMachine(code, [2]).run() == [2]
 
 
-def test_op_add_io() -> None:
+def test_add() -> None:
     tape = TapeStack()
     result = tape.register_variable()
     left = tape.register_variable()
@@ -39,7 +39,7 @@ def test_op_add_io() -> None:
     assert StateMachine(code, [2, 3]).run() == [5]
 
 
-def test_multiply_io() -> None:
+def test_multiply() -> None:
     tape = TapeStack()
     result = tape.register_variable()
     left = tape.register_variable()
@@ -53,7 +53,7 @@ def test_multiply_io() -> None:
     assert StateMachine(code, [2, 3]).run() == [6]
 
 
-def test_minus_io() -> None:
+def test_minus() -> None:
     tape = TapeStack()
     result = tape.register_variable()
     left = tape.register_variable()
@@ -67,7 +67,7 @@ def test_minus_io() -> None:
     assert StateMachine(code, [7, 5]).run() == [2]
 
 
-def test_not_io() -> None:
+def test_not() -> None:
     tape = TapeStack()
     result = tape.register_variable()
     condition = tape.register_variable()
@@ -81,7 +81,7 @@ def test_not_io() -> None:
     assert StateMachine(code, [2]).run() == [0]
 
 
-def test_and_io() -> None:
+def test_and() -> None:
     tape = TapeStack()
     result = tape.register_variable()
     left = tape.register_variable()
@@ -93,12 +93,12 @@ def test_and_io() -> None:
         + op_output(tape, result)
     )
     assert StateMachine(code, [0, 0]).run() == [0]
-    assert StateMachine(code, [0, 1]).run() == [1]
-    assert StateMachine(code, [1, 0]).run() == [1]
+    assert StateMachine(code, [0, 1]).run() == [0]
+    assert StateMachine(code, [1, 0]).run() == [0]
     assert StateMachine(code, [1, 1]).run() == [1]
 
 
-def test_less_io() -> None:
+def test_less() -> None:
     tape = TapeStack()
     result = tape.register_variable()
     left = tape.register_variable()

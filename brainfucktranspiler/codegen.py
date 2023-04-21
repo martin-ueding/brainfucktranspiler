@@ -134,8 +134,19 @@ def op_not(tape: TapeStack, result: Variable, condition: Variable) -> str:
 
 
 def op_and(tape: TapeStack, result: Variable, left: Variable, right: Variable) -> str:
-    pass
+    return op_clear(tape, result) + op_if(
+        tape, left, lambda: op_if(tape, right, lambda: op_increment(tape, result))
+    )
 
 
 def op_less(tape: TapeStack, result: Variable, left: Variable, right: Variable) -> str:
-    pass
+    temp_left = tape.register_variable()
+    temp_right = tape.register_variable()
+
+    return (
+        op_clear(tape, result)
+        + op_clear(tape, temp_left)
+        + op_clear(tape, temp_right)
+        + op_copy(tape, left, temp_left)
+        + op_copy(tape, right, temp_right)
+    )
