@@ -66,7 +66,22 @@ class StateMachine:
     def run(self) -> list[int]:
         while self._program_counter != len(self._program):
             self.step()
+            # self._print()
         return self._outputs
+
+    def _print(self) -> None:
+        print(
+            " ".join(
+                f"[{cell:2d}]" if idx == self._tape._cursor else f" {cell:2d} "
+                for idx, cell in enumerate(self._tape._tape)
+            )
+        )
+        print(
+            "".join(
+                f" {cell} " if idx == self._program_counter else f"{cell}"
+                for idx, cell in enumerate(self._program)
+            )
+        )
 
     def _goto_bracket(self, forward: bool) -> None:
         my_bracket = "[" if forward else "]"

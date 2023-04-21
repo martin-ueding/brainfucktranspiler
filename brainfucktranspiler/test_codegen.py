@@ -138,9 +138,9 @@ def test_subtract_smaller() -> None:
         + op_output(tape, left)
         + op_output(tape, right)
     )
-    assert StateMachine(code, [2, 4]).run() == [0, 2]
-    assert StateMachine(code, [2, 1]).run() == [1, 0]
-    assert StateMachine(code, [1, 1]).run() == [0, 0]
+    assert StateMachine(code, [2, 5]).run() == [0, 3]
+    assert StateMachine(code, [5, 2]).run() == [3, 0]
+    assert StateMachine(code, [3, 3]).run() == [0, 0]
     assert StateMachine(code, [0, 0]).run() == [0, 0]
 
 
