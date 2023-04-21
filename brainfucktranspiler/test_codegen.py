@@ -14,26 +14,26 @@ from .interpreter import StateMachine
 
 def test_op_add() -> None:
     tape = TapeStack()
-    result = tape.register_variable("result")
-    left = tape.register_variable("left")
-    right = tape.register_variable("right")
+    result = tape.register_variable()
+    left = tape.register_variable()
+    right = tape.register_variable()
     code = op_add(tape, result, left, right)
     assert code == ">[-<+>]>[-<<+>>]"
 
 
 def test_op_copy() -> None:
     tape = TapeStack()
-    source = tape.register_variable("source")
-    destination = tape.register_variable("destination")
+    source = tape.register_variable()
+    destination = tape.register_variable()
     code = op_copy(tape, destination, source)
     assert code == ">>[-]<<[->+>+<<]>>[-<<+>>]"
 
 
 def test_op_add_io() -> None:
     tape = TapeStack()
-    result = tape.register_variable("result")
-    left = tape.register_variable("left")
-    right = tape.register_variable("right")
+    result = tape.register_variable()
+    left = tape.register_variable()
+    right = tape.register_variable()
     code = (
         op_input(tape, left)
         + op_input(tape, right)
@@ -45,9 +45,9 @@ def test_op_add_io() -> None:
 
 def test_multiply_io() -> None:
     tape = TapeStack()
-    result = tape.register_variable("result")
-    left = tape.register_variable("left")
-    right = tape.register_variable("right")
+    result = tape.register_variable()
+    left = tape.register_variable()
+    right = tape.register_variable()
     code = (
         op_input(tape, left)
         + op_input(tape, right)
@@ -59,9 +59,9 @@ def test_multiply_io() -> None:
 
 def test_minus_io() -> None:
     tape = TapeStack()
-    result = tape.register_variable("result")
-    left = tape.register_variable("left")
-    right = tape.register_variable("right")
+    result = tape.register_variable()
+    left = tape.register_variable()
+    right = tape.register_variable()
     code = (
         op_input(tape, left)
         + op_input(tape, right)
@@ -73,8 +73,8 @@ def test_minus_io() -> None:
 
 def test_not_io() -> None:
     tape = TapeStack()
-    result = tape.register_variable("result")
-    condition = tape.register_variable("condition")
+    result = tape.register_variable()
+    condition = tape.register_variable()
     code = (
         op_input(tape, condition)
         + op_not(tape, result, condition)
@@ -87,9 +87,9 @@ def test_not_io() -> None:
 
 def test_less_io() -> None:
     tape = TapeStack()
-    result = tape.register_variable("result")
-    left = tape.register_variable("left")
-    right = tape.register_variable("right")
+    result = tape.register_variable()
+    left = tape.register_variable()
+    right = tape.register_variable()
     code = (
         op_input(tape, left)
         + op_input(tape, right)

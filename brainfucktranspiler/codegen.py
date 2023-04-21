@@ -3,7 +3,7 @@ from typing import Callable
 
 
 class Variable:
-    def __init__(self, name: str, position: int) -> None:
+    def __init__(self, position: int) -> None:
         self.name = name
         self.position = position
 
@@ -13,9 +13,9 @@ class TapeStack:
         self._stack = []
         self._position = 0
 
-    def register_variable(self, name: str) -> Variable:
+    def register_variable(self) -> Variable:
         new_position = len(self._stack)
-        new_variable = Variable(name, new_position)
+        new_variable = Variable(new_position)
         self._stack.append(new_variable)
         return new_variable
 
@@ -83,7 +83,7 @@ def op_if(tape, condition: Variable, body: Callable[[], str]) -> str:
 
 
 def op_copy(tape: TapeStack, destination: Variable, source: Variable) -> str:
-    temp = tape.register_variable("temp")
+    temp = tape.register_variable()
     code = (
         op_clear(tape, temp)
         + op_while(
@@ -112,7 +112,7 @@ def op_minus(tape: TapeStack, result: Variable, left: Variable, right: Variable)
 def op_multiply(
     tape: TapeStack, result: Variable, left: Variable, right: Variable
 ) -> str:
-    temp = tape.register_variable("temp")
+    temp = tape.register_variable()
     code = op_clear(tape, temp) + op_while(
         tape,
         left,
