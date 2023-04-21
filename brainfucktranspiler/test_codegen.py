@@ -8,7 +8,7 @@ from .codegen import (
     fn_minus,
     fn_not,
     op_less,
-    op_and,
+    fn_and,
     op_subtract_smaller,
     op_less_equals,
     op_divide,
@@ -92,7 +92,7 @@ def test_and() -> None:
     code = (
         op_input(tape, left)
         + op_input(tape, right)
-        + op_and(tape, result, left, right)
+        + fn_and(tape, result, left, right)
         + op_output(tape, result)
     )
     assert StateMachine(code, [0, 0]).run() == [0]
