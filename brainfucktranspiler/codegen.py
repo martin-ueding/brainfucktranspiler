@@ -34,67 +34,73 @@ class TapeStack:
         return "".join(result)
 
 
-def op_accumulate(
-    tape_stack: TapeStack, accumulator: Variable, summand: Variable
-) -> str:
+def op_accumulate(tape: TapeStack, accumulator: Variable, summand: Variable) -> str:
     return op_while(
-        tape_stack, summand, lambda: ("-" + tape_stack.seek(accumulator) + "+")
+        tape,
+        summand,
+        lambda: (op_decrement(tape, summand) + op_increment(tape, accumulator)),
     )
 
 
-def op_add(
-    tape_stack: TapeStack, result: Variable, left: Variable, right: Variable
-) -> str:
-    return op_accumulate(tape_stack, result, left) + op_accumulate(
-        tape_stack, result, right
-    )
+def op_add(tape: TapeStack, result: Variable, left: Variable, right: Variable) -> str:
+    return op_accumulate(tape, result, left) + op_accumulate(tape, result, right)
 
 
-def op_clear(tape_stack: TapeStack, var: Variable) -> str:
-    return tape_stack.seek(var) + "[-]"
+def op_clear(tape: TapeStack, var: Variable) -> str:
+    return tape.seek(var) + op_while(tape, var, lambda: op_decrement(tape, var))
 
 
-def op_copy(tape_stack: TapeStack, destination: Variable, source: Variable) -> str:
-    temp = tape_stack.register_variable("temp")
+def op_copy(tape: TapeStack, destination: Variable, source: Variable) -> str:
+    temp = tape.register_variable("temp")
     code = (
-        op_clear(tape_stack, temp)
+        op_clear(tape, temp)
         + op_while(
-            tape_stack,
+            tape,
             source,
             lambda: (
-                "-" + tape_stack.seek(destination) + "+" + tape_stack.seek(temp) + "+"
+                op_decrement(tape, source)
+                + op_increment(tape, destination)
+                + op_increment(tape, temp)
             ),
         )
-        + op_accumulate(tape_stack, source, temp)
+        + op_accumulate(tape, source, temp)
     )
-    tape_stack.unregister_variable(temp)
+    tape.unregister_variable(temp)
     return code
 
 
-def op_input(tape_stack: TapeStack, var: Variable) -> str:
-    return tape_stack.seek(var) + ","
+def op_decrement(tape: TapeStack, var: Variable) -> str:
+    return tape.seek(var) + "-"
+
+
+def op_increment(tape: TapeStack, var: Variable) -> str:
+    return tape.seek(var) + "+"
+
+
+def op_input(tape: TapeStack, var: Variable) -> str:
+    return tape.seek(var) + ","
 
 
 def op_multiply(
-    tape_stack: TapeStack, result: Variable, left: Variable, right: Variable
+    tape: TapeStack, result: Variable, left: Variable, right: Variable
 ) -> str:
-    temp = tape_stack.register_variable("temp")
-    code = op_clear(tape_stack, temp) + op_while(
-        tape_stack,
+    temp = tape.register_variable("temp")
+    code = op_clear(tape, temp) + op_while(
+        tape,
         left,
         lambda: (
-            "-"
-            + op_copy(tape_stack, temp, right)
-            + op_accumulate(tape_stack, result, temp)
+            op_decrement(tape, left)
+            + op_copy(tape, temp, right)
+            + op_accumulate(tape, result, temp)
         ),
     )
-    tape_stack.unregister_variable(temp)
+    tape.unregister_variable(temp)
     return code
 
 
-def op_output(tape_stack: TapeStack, var: Variable) -> str:
-    return tape_stack.seek(var) + "."
+def op_output(tape: TapeStack, var: Variable) -> str:
+    return tape.seek(var) + "."
 
 
-def op_while(tape_stack, condition: Variable, body: Callable[[], str]) -> str:
-    return tape_stack.seek(condition) + "[" + body() + tape_stack.seek(condition) + "]"
+def op_while(tape, condition: Variable, body: Callable[[], str]) -> str:
+    return tape.seek(condition) + "[" + body() + tape.seek(condition) + "]"
