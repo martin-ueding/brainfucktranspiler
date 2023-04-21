@@ -78,6 +78,10 @@ def op_clear(tape: TapeStack, var: Variable) -> str:
     return op_while(tape, var, lambda: op_decrement(tape, var))
 
 
+def op_if(tape, condition: Variable, body: Callable[[], str]) -> str:
+    return op_while(tape, condition, lambda: body() + op_clear(tape, condition))
+
+
 def op_copy(tape: TapeStack, destination: Variable, source: Variable) -> str:
     temp = tape.register_variable("temp")
     code = (
@@ -117,6 +121,18 @@ def op_multiply(
             + op_copy(tape, temp, right)
             + op_accumulate(tape, result, temp)
         ),
+    )
+    tape.unregister_variable(temp)
+    return code
+
+
+def op_not(tape: TapeStack, var: Variable) -> str:
+    temp = tape.register_variable("temp")
+    code = (
+        op_clear(tape, temp)
+        + op_increment(tape, temp)
+        + op_if(tape, var, lambda: op_clear(tape, temp))
+        + op_accumulate(tape, var, temp)
     )
     tape.unregister_variable(temp)
     return code
