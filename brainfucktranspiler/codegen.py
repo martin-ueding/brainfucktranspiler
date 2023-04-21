@@ -172,7 +172,9 @@ def fn_and(tape: TapeStack, result: Variable, left: Variable, right: Variable) -
         + fn_copy(tape, left_copy, left)
         + fn_copy(tape, right_copy, right)
         + op_if(
-            tape, left, lambda: op_if(tape, right, lambda: op_increment(tape, result))
+            tape,
+            left_copy,
+            lambda: op_if(tape, right_copy, lambda: op_increment(tape, result)),
         )
     )
     tape.unregister_variable(right_copy)
@@ -181,22 +183,14 @@ def fn_and(tape: TapeStack, result: Variable, left: Variable, right: Variable) -
 
 
 def op_subtract_smaller(tape: TapeStack, left: Variable, right: Variable) -> str:
-    temp_left = tape.register_variable()
-    temp_right = tape.register_variable()
     temp_and = tape.register_variable()
-    cond = (
-        lambda: fn_copy(tape, temp_left, left)
-        + fn_copy(tape, temp_right, right)
-        + fn_and(tape, temp_and, temp_left, temp_right)
-    )
+    cond = lambda: fn_and(tape, temp_and, left, right)
     code = cond() + op_while(
         tape,
         temp_and,
         lambda: (op_decrement(tape, left) + op_decrement(tape, right) + cond()),
     )
     tape.unregister_variable(temp_and)
-    tape.unregister_variable(temp_right)
-    tape.unregister_variable(temp_left)
     return code
 
 
