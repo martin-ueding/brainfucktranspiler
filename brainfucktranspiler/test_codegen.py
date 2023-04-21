@@ -1,4 +1,12 @@
-from .codegen import TapeStack, op_add, op_copy, op_input, op_output, op_multiply
+from .codegen import (
+    TapeStack,
+    op_add,
+    op_copy,
+    op_input,
+    op_output,
+    op_multiply,
+    op_minus,
+)
 from .interpreter import StateMachine
 
 
@@ -49,3 +57,19 @@ def test_multiply_io() -> None:
 
     sm = StateMachine(code, [2, 3])
     assert sm.run() == [6]
+
+
+def test_minus_io() -> None:
+    tape = TapeStack()
+    result = tape.register_variable("result")
+    left = tape.register_variable("left")
+    right = tape.register_variable("right")
+    code = (
+        op_input(tape, left)
+        + op_input(tape, right)
+        + op_minus(tape, result, left, right)
+        + op_output(tape, result)
+    )
+
+    sm = StateMachine(code, [7, 5])
+    assert sm.run() == [2]

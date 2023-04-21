@@ -62,6 +62,14 @@ def op_accumulate(tape: TapeStack, accumulator: Variable, summand: Variable) -> 
     )
 
 
+def op_subtract(tape: TapeStack, accumulator: Variable, summand: Variable) -> str:
+    return op_while(
+        tape,
+        summand,
+        lambda: (op_decrement(tape, summand) + op_decrement(tape, accumulator)),
+    )
+
+
 def op_add(tape: TapeStack, result: Variable, left: Variable, right: Variable) -> str:
     return op_accumulate(tape, result, left) + op_accumulate(tape, result, right)
 
@@ -87,6 +95,14 @@ def op_copy(tape: TapeStack, destination: Variable, source: Variable) -> str:
     )
     tape.unregister_variable(temp)
     return code
+
+
+def op_minus(tape: TapeStack, result: Variable, left: Variable, right: Variable) -> str:
+    return (
+        op_clear(tape, result)
+        + op_accumulate(tape, result, left)
+        + op_subtract(tape, result, right)
+    )
 
 
 def op_multiply(
