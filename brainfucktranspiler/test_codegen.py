@@ -4,7 +4,7 @@ from .codegen import (
     fn_copy,
     op_input,
     op_output,
-    op_multiply,
+    fn_multiply,
     fn_minus,
     op_not,
     op_less,
@@ -50,7 +50,7 @@ def test_multiply() -> None:
     code = (
         op_input(tape, left)
         + op_input(tape, right)
-        + op_multiply(tape, result, left, right)
+        + fn_multiply(tape, result, left, right)
         + op_output(tape, result)
     )
     assert StateMachine(code, [2, 3]).run() == [6]

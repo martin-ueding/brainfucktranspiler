@@ -126,19 +126,28 @@ def fn_minus(tape: TapeStack, result: Variable, left: Variable, right: Variable)
     return code
 
 
-def op_multiply(
+def fn_multiply(
     tape: TapeStack, result: Variable, left: Variable, right: Variable
 ) -> str:
     temp = tape.register_variable()
-    code = op_clear(tape, temp) + op_while(
-        tape,
-        left,
-        lambda: (
-            op_decrement(tape, left)
-            + fn_copy(tape, temp, right)
-            + op_accumulate(tape, result, temp)
-        ),
+    left_copy = tape.register_variable()
+    right_copy = tape.register_variable()
+    code = (
+        op_clear(tape, temp)
+        + fn_copy(tape, left_copy, left)
+        + fn_copy(tape, right_copy, right)
+        + op_while(
+            tape,
+            left_copy,
+            lambda: (
+                op_decrement(tape, left_copy)
+                + fn_copy(tape, temp, right_copy)
+                + op_accumulate(tape, result, temp)
+            ),
+        )
     )
+    tape.unregister_variable(right_copy)
+    tape.unregister_variable(left_copy)
     tape.unregister_variable(temp)
     return code
 
