@@ -9,7 +9,7 @@ class RightInfiniteTape:
             self._tape.append(0)
 
     def left(self) -> None:
-        assert self._cursor > 0
+        assert self._cursor > 0, str(self)
         if self._cursor == len(self._tape) - 1 and self.is_zero():
             self._tape.pop()
         self._cursor -= 1
@@ -18,7 +18,7 @@ class RightInfiniteTape:
         self._tape[self._cursor] += 1
 
     def decrement(self) -> None:
-        assert not self.is_zero()
+        assert not self.is_zero(), str(self)
         self._tape[self._cursor] -= 1
 
     def is_zero(self) -> int:
@@ -29,6 +29,12 @@ class RightInfiniteTape:
 
     def set(self, number: int) -> None:
         self._tape[self._cursor] = number
+
+    def __str__(self) -> str:
+        return " ".join(
+            f"[{cell}]" if idx == self._cursor else f"{cell}"
+            for idx, cell in enumerate(self._tape)
+        )
 
 
 class StateMachine:
@@ -70,12 +76,7 @@ class StateMachine:
         return self._outputs
 
     def _print(self) -> None:
-        print(
-            " ".join(
-                f"[{cell:2d}]" if idx == self._tape._cursor else f" {cell:2d} "
-                for idx, cell in enumerate(self._tape._tape)
-            )
-        )
+        print(self._tape)
         print(
             "".join(
                 f" {cell} " if idx == self._program_counter else f"{cell}"

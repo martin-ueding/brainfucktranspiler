@@ -142,6 +142,8 @@ def test_subtract_smaller() -> None:
     assert StateMachine(code, [5, 2]).run() == [3, 0]
     assert StateMachine(code, [3, 3]).run() == [0, 0]
     assert StateMachine(code, [0, 0]).run() == [0, 0]
+    assert StateMachine(code, [15, 10]).run() == [5, 0]
+    assert StateMachine(code, [10, 15]).run() == [0, 5]
 
 
 def test_less() -> None:
@@ -158,6 +160,9 @@ def test_less() -> None:
     assert StateMachine(code, [2, 2]).run() == [0]
     assert StateMachine(code, [1, 2]).run() == [1]
     assert StateMachine(code, [2, 1]).run() == [0]
+    assert StateMachine(code, [10, 15]).run() == [1]
+    assert StateMachine(code, [10, 10]).run() == [0]
+    assert StateMachine(code, [15, 10]).run() == [0]
 
 
 def test_less_equals() -> None:
@@ -174,6 +179,9 @@ def test_less_equals() -> None:
     assert StateMachine(code, [2, 2]).run() == [1]
     assert StateMachine(code, [1, 2]).run() == [1]
     assert StateMachine(code, [2, 1]).run() == [0]
+    assert StateMachine(code, [10, 15]).run() == [1]
+    assert StateMachine(code, [10, 10]).run() == [1]
+    assert StateMachine(code, [15, 10]).run() == [0]
 
 
 def test_divide() -> None:
@@ -189,6 +197,9 @@ def test_divide() -> None:
         + op_output(tape, quotient)
         + op_output(tape, remainder)
     )
+    assert StateMachine(code, [0, 1]).run() == [0, 0]
+    assert StateMachine(code, [1, 1]).run() == [1, 0]
+    assert StateMachine(code, [2, 1]).run() == [2, 0]
+    assert StateMachine(code, [1, 2]).run() == [0, 1]
     assert StateMachine(code, [10, 3]).run() == [3, 1]
     assert StateMachine(code, [10, 5]).run() == [2, 0]
-    assert StateMachine(code, [2, 1]).run() == [2, 0]
