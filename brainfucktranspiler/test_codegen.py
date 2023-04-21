@@ -6,7 +6,7 @@ from .codegen import (
     op_output,
     fn_multiply,
     fn_minus,
-    op_not,
+    fn_not,
     op_less,
     op_and,
     op_subtract_smaller,
@@ -76,7 +76,7 @@ def test_not() -> None:
     condition = tape.register_variable()
     code = (
         op_input(tape, condition)
-        + op_not(tape, result, condition)
+        + fn_not(tape, result, condition)
         + op_output(tape, result)
     )
     assert StateMachine(code, [0]).run() == [1]

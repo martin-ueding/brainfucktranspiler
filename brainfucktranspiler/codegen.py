@@ -152,12 +152,16 @@ def fn_multiply(
     return code
 
 
-def op_not(tape: TapeStack, result: Variable, condition: Variable) -> str:
-    return (
+def fn_not(tape: TapeStack, result: Variable, condition: Variable) -> str:
+    condition_copy = tape.register_variable()
+    code = (
         op_clear(tape, result)
+        + fn_copy(tape, condition_copy, condition)
         + op_increment(tape, result)
-        + op_if(tape, condition, lambda: op_clear(tape, result))
+        + op_if(tape, condition_copy, lambda: op_clear(tape, result))
     )
+    tape.unregister_variable(condition_copy)
+    return code
 
 
 def op_and(tape: TapeStack, result: Variable, left: Variable, right: Variable) -> str:
@@ -190,7 +194,7 @@ def op_less(tape: TapeStack, result: Variable, left: Variable, right: Variable) 
     not_left = tape.register_variable()
     code = (
         op_subtract_smaller(tape, left, right)
-        + op_not(tape, not_left, left)
+        + fn_not(tape, not_left, left)
         + op_and(tape, result, not_left, right)
     )
     tape.unregister_variable(not_left)
@@ -200,7 +204,7 @@ def op_less(tape: TapeStack, result: Variable, left: Variable, right: Variable) 
 def op_less_equals(
     tape: TapeStack, result: Variable, left: Variable, right: Variable
 ) -> str:
-    code = op_subtract_smaller(tape, left, right) + op_not(tape, result, left)
+    code = op_subtract_smaller(tape, left, right) + fn_not(tape, result, left)
     return code
 
 
