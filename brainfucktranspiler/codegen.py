@@ -250,18 +250,21 @@ def fn_divide(
     divisor: Variable,
 ) -> str:
     has_remainder = tape.register_variable()
-    cond = lambda: fn_greater_equals(tape, has_remainder, remainder, divisor)
+
+    def condition():
+        return fn_greater_equals(tape, has_remainder, remainder, divisor)
+
     code = (
         fn_copy(tape, remainder, dividend)
         + op_clear(tape, quotient)
-        + cond()
+        + condition()
         + op_while(
             tape,
             has_remainder,
             lambda: (
                 fn_minus(tape, remainder, remainder, divisor)
                 + op_increment(tape, quotient)
-                + cond()
+                + condition()
             ),
         )
     )
