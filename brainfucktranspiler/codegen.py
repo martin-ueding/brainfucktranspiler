@@ -34,6 +34,26 @@ class TapeStack:
         return "".join(result)
 
 
+def op_decrement(tape: TapeStack, var: Variable) -> str:
+    return tape.seek(var) + "-"
+
+
+def op_increment(tape: TapeStack, var: Variable) -> str:
+    return tape.seek(var) + "+"
+
+
+def op_input(tape: TapeStack, var: Variable) -> str:
+    return tape.seek(var) + ","
+
+
+def op_output(tape: TapeStack, var: Variable) -> str:
+    return tape.seek(var) + "."
+
+
+def op_while(tape, condition: Variable, body: Callable[[], str]) -> str:
+    return tape.seek(condition) + "[" + body() + tape.seek(condition) + "]"
+
+
 def op_accumulate(tape: TapeStack, accumulator: Variable, summand: Variable) -> str:
     return op_while(
         tape,
@@ -47,7 +67,7 @@ def op_add(tape: TapeStack, result: Variable, left: Variable, right: Variable) -
 
 
 def op_clear(tape: TapeStack, var: Variable) -> str:
-    return tape.seek(var) + op_while(tape, var, lambda: op_decrement(tape, var))
+    return op_while(tape, var, lambda: op_decrement(tape, var))
 
 
 def op_copy(tape: TapeStack, destination: Variable, source: Variable) -> str:
@@ -69,18 +89,6 @@ def op_copy(tape: TapeStack, destination: Variable, source: Variable) -> str:
     return code
 
 
-def op_decrement(tape: TapeStack, var: Variable) -> str:
-    return tape.seek(var) + "-"
-
-
-def op_increment(tape: TapeStack, var: Variable) -> str:
-    return tape.seek(var) + "+"
-
-
-def op_input(tape: TapeStack, var: Variable) -> str:
-    return tape.seek(var) + ","
-
-
 def op_multiply(
     tape: TapeStack, result: Variable, left: Variable, right: Variable
 ) -> str:
@@ -96,11 +104,3 @@ def op_multiply(
     )
     tape.unregister_variable(temp)
     return code
-
-
-def op_output(tape: TapeStack, var: Variable) -> str:
-    return tape.seek(var) + "."
-
-
-def op_while(tape, condition: Variable, body: Callable[[], str]) -> str:
-    return tape.seek(condition) + "[" + body() + tape.seek(condition) + "]"
