@@ -8,25 +8,21 @@ from .codegen import (
     op_minus,
     op_not,
     op_less,
+    op_and,
 )
 from .interpreter import StateMachine
-
-
-def test_op_add() -> None:
-    tape = TapeStack()
-    result = tape.register_variable()
-    left = tape.register_variable()
-    right = tape.register_variable()
-    code = op_add(tape, result, left, right)
-    assert code == ">[-<+>]>[-<<+>>]"
 
 
 def test_op_copy() -> None:
     tape = TapeStack()
     source = tape.register_variable()
     destination = tape.register_variable()
-    code = op_copy(tape, destination, source)
-    assert code == ">>[-]<<[->+>+<<]>>[-<<+>>]"
+    code = (
+        op_input(tape, source)
+        + op_copy(tape, destination, source)
+        + op_output(tape, destination)
+    )
+    assert StateMachine(code, [2]).run() == [2]
 
 
 def test_op_add_io() -> None:
@@ -85,6 +81,23 @@ def test_not_io() -> None:
     assert StateMachine(code, [2]).run() == [0]
 
 
+def test_and_io() -> None:
+    tape = TapeStack()
+    result = tape.register_variable()
+    left = tape.register_variable()
+    right = tape.register_variable()
+    code = (
+        op_input(tape, left)
+        + op_input(tape, right)
+        + op_and(tape, result, left, right)
+        + op_output(tape, result)
+    )
+    assert StateMachine(code, [0, 0]).run() == [0]
+    assert StateMachine(code, [0, 1]).run() == [1]
+    assert StateMachine(code, [1, 0]).run() == [1]
+    assert StateMachine(code, [1, 1]).run() == [1]
+
+
 def test_less_io() -> None:
     tape = TapeStack()
     result = tape.register_variable()
@@ -96,5 +109,6 @@ def test_less_io() -> None:
         + op_less(tape, result, left, right)
         + op_output(tape, result)
     )
+    assert StateMachine(code, [2, 2]).run() == [0]
     assert StateMachine(code, [1, 2]).run() == [1]
     assert StateMachine(code, [2, 1]).run() == [0]

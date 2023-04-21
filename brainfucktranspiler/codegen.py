@@ -4,7 +4,6 @@ from typing import Callable
 
 class Variable:
     def __init__(self, position: int) -> None:
-        self.name = name
         self.position = position
 
 
@@ -132,6 +131,10 @@ def op_not(tape: TapeStack, result: Variable, condition: Variable) -> str:
         + op_increment(tape, result)
         + op_if(tape, condition, lambda: op_clear(tape, result))
     )
+
+
+def op_and(tape: TapeStack, result: Variable, left: Variable, right: Variable) -> str:
+    pass
 
 
 def op_less(tape: TapeStack, result: Variable, left: Variable, right: Variable) -> str:
