@@ -83,3 +83,20 @@ def op_copy(tape_stack: TapeStack, destination: Variable, source: Variable) -> s
     )
     tape_stack.unregister_variable(temp)
     return code
+
+
+def op_multiply(
+    tape_stack: TapeStack, result: Variable, left: Variable, right: Variable
+) -> str:
+    temp = tape_stack.register_variable("temp")
+    code = (
+        op_clear(tape_stack, temp)
+        + tape_stack.seek(left)
+        + "[-"
+        + op_copy(tape_stack, temp, right)
+        + op_accumulate(tape_stack, result, temp)
+        + tape_stack.seek(left)
+        + "]"
+    )
+    tape_stack.unregister_variable(temp)
+    return code
