@@ -168,3 +168,20 @@ def op_less(tape: TapeStack, result: Variable, left: Variable, right: Variable) 
     )
     tape.unregister_variable(not_left)
     return code
+
+
+def op_less_equals(
+    tape: TapeStack, result: Variable, left: Variable, right: Variable
+) -> str:
+    code = op_subtract_smaller(tape, left, right) + op_not(tape, result, left)
+    return code
+
+
+def op_divide(
+    tape: TapeStack,
+    quotient: Variable,
+    remainder: Variable,
+    dividend: Variable,
+    divisor: Variable,
+) -> str:
+    op_less()
