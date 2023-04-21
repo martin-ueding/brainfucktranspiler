@@ -12,6 +12,7 @@ from .codegen import (
     op_subtract_smaller,
     fn_less_equals,
     fn_divide,
+    fn_or,
 )
 from .interpreter import StateMachine
 
@@ -124,6 +125,23 @@ def test_and() -> None:
     assert StateMachine(code, [0, 0]).run() == [0]
     assert StateMachine(code, [0, 1]).run() == [0]
     assert StateMachine(code, [1, 0]).run() == [0]
+    assert StateMachine(code, [1, 1]).run() == [1]
+
+
+def test_or() -> None:
+    tape = TapeStack()
+    result = tape.register_variable()
+    left = tape.register_variable()
+    right = tape.register_variable()
+    code = (
+        op_input(tape, left)
+        + op_input(tape, right)
+        + fn_or(tape, result, left, right)
+        + op_output(tape, result)
+    )
+    assert StateMachine(code, [0, 0]).run() == [0]
+    assert StateMachine(code, [0, 1]).run() == [1]
+    assert StateMachine(code, [1, 0]).run() == [1]
     assert StateMachine(code, [1, 1]).run() == [1]
 
 
