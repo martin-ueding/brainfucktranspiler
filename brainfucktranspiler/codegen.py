@@ -126,13 +126,13 @@ def op_multiply(
     return code
 
 
-def op_not(tape: TapeStack, var: Variable) -> str:
-    temp = tape.register_variable("temp")
-    code = (
-        op_clear(tape, temp)
-        + op_increment(tape, temp)
-        + op_if(tape, var, lambda: op_clear(tape, temp))
-        + op_accumulate(tape, var, temp)
+def op_not(tape: TapeStack, result: Variable, condition: Variable) -> str:
+    return (
+        op_clear(tape, result)
+        + op_increment(tape, result)
+        + op_if(tape, condition, lambda: op_clear(tape, result))
     )
-    tape.unregister_variable(temp)
-    return code
+
+
+def op_less(tape: TapeStack, result: Variable, left: Variable, right: Variable) -> str:
+    pass
